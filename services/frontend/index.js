@@ -35,6 +35,29 @@ function newBook(book) {
     return div;
 }
 
+document.getElementById('search-button').addEventListener('click', function () {
+    const bookId = document.getElementById('search-input').value.trim();
+    if (!bookId) {
+        swal('Erro', 'Por favor, insira um ID de livro válido.', 'error');
+        return;
+    }
+
+    fetch(`http://localhost:3000/product/${bookId}`)
+        .then(response => {
+            if (response.ok) return response.json();
+            throw new Error('Livro não encontrado');
+        })
+        .then(book => {
+            const booksContainer = document.querySelector('.books');
+            booksContainer.innerHTML = ''; // Limpa os livros exibidos
+            booksContainer.appendChild(newBook(book));
+        })
+        .catch(error => {
+            swal('Erro', error.message, 'error');
+        });
+});
+
+
 function calculateShipping(id, cep) {
     fetch('http://localhost:3000/shipping/' + cep)
         .then((data) => {
